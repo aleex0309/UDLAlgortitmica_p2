@@ -25,8 +25,8 @@ def shipDetectorIterativo(image):
             if isBigger(i, j, image):
                 results.append([i - 1, j - 1])
 
-    print("The image is: ", image)
-    print("The results are: ", results)
+    #print("The image is: ", image)
+    #print("The results are: ", results)
     return results
 
 def shipDetectorRecursivo(image):
@@ -64,6 +64,44 @@ def isBigger(i, j, image): #Comprobar laterales
 
 # TODO: En este programa, debereis generar las imagenes de costos correspondientes tal y como hicimos en laboratorios y en la práctica 1.
 # Programa principal para la generación de las matrices 2D y la identificación de barcos.
+def time_recur_calc():
+    import timeit
+    times = []
+    for x in range(1,30 , 1):
+        #print("n =", x)
+        tmp_img = image_generator(x)['image']
+        times.append((x, timeit.timeit("shipDetectorRecursivo(" + str(tmp_img) + ")",
+                                       setup="from __main__ import shipDetectorRecursivo", number=100)))
+    return times
+
+
+def time_iter_calc():
+    import timeit
+    times = []
+    for x in range(2, 202, 5):
+        #print("n =", x)
+        tmp_img = image_generator(x)['image']
+        times.append((x, timeit.timeit("shipDetectorIterativo(" + str(tmp_img) + ")",
+                                       setup="from __main__ import shipDetectorIterativo", number=100)))
+    return times
+
+
+def graph(x_list, y_list):
+    print(x_list)
+    print(y_list)
+    plt.scatter(x_list, y_list)
+    plt.show()
+
+
+def calc_empirical_times():
+
+    time_iter = time_iter_calc()
+    graph(*map(list, zip(*time_iter)))
+
+    time_recur = time_recur_calc()
+    graph(*map(list, zip(*time_recur)))
+
+    return 0
 
 if __name__ == '__main__':
 
@@ -71,6 +109,7 @@ if __name__ == '__main__':
         sys.exit('Usage: ' + sys.argv[0] + ' <matrix_size_number>')
 
     image2D = image_generator(int(sys.argv[1]))
-    print("The original image is: ", image2D)
     shipDetectorIterativo(image2D["image"])
+
+    calc_empirical_times()
 
